@@ -9,6 +9,9 @@ using Android.Graphics;
 using Java.Net;
 using Java.IO;
 using System.Net.Http;
+using System.Collections.Generic;
+
+
 
 namespace SmartSHOJI
 {
@@ -19,15 +22,14 @@ namespace SmartSHOJI
 
 
 
-        EditText urlEditText;
-        Button startButton;
-        TextView progressTextView;
         ImageView imageView;
+        ListView list;
 
 
         URL test = new URL("http://www.google.co.jp/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png");
 
         // Bitmap oBmp = BitmapFactory.DecodeStream(istream);
+        /*
         protected override void OnCreate(Bundle bundle)
 
         {
@@ -38,36 +40,28 @@ namespace SmartSHOJI
             SetContentView(Resource.Layout.Main);
             findViews();
 
-            HttpGet("http://www.google.co.jp/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png");
-            /*
-            // Get our button from the layout resource,
-            // and attach an event to it
-            Button button = FindViewById<Button>(Resource.Id.MyButton);
+            //HttpGet("http://www.google.co.jp/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png");
 
-            button.Click += delegate { button.Text = string.Format("{0} clicks!", count++); };
-            H
-            // InputStream istream;
-            //istream = test.OpenStream();
-            
-            ImageView image_view = (ImageView)FindViewById(Resource.Id.imageView1);
+            var items = new string[] { "List1", "List2", "List3", "List4", "List1", "List2", "List3", "List4", "List1", "List2", "List3", "List4", "List1", "List2", "List3", "List4" };
+            list.Adapter = new ArrayAdapter<String>(this, Resource.Layout.ListViewItemTemplate, items);
+        
+        }
+        */
 
-            System.IO.Stream istream;
-            istream = test.OpenStream();
-            Bitmap iii = BitmapFactory.DecodeStream(istream);
-            
-            image_view.SetImageBitmap(iii);
-            istream.Close();
-            */
-
+        protected override void OnCreate(Bundle bundle)
+        {
+            base.OnCreate(bundle);
+            SetContentView(Resource.Layout.Main);
+            var contactsAdapter = new ContactsAdapter(this);
+            var contactsListView = FindViewById<ListView>(Resource.Id.ContactsListView);
+            contactsListView.Adapter = contactsAdapter;
         }
 
 
         protected void findViews()
         {
-          //  urlEditText = (EditText)FindViewById(Resource.Id.urlEditText);
-          //  startButton = (Button)FindViewById(Resource.Id.startButton);
-          //  progressTextView = (TextView)FindViewById(Resource.Id.progressTextView);
             imageView = (ImageView)FindViewById(Resource.Id.imageView1);
+            list = (ListView)FindViewById(Resource.Id.ContactsListView);
         }
 
         private async void HttpGet(string url)
@@ -89,6 +83,7 @@ namespace SmartSHOJI
             */
 
         }
+
 
     }
 
