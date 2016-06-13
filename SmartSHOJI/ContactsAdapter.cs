@@ -5,60 +5,41 @@ using Android.Content;
 using Android.Provider;
 using Android.Views;
 using Android.Widget;
+using System.Net.Http;
+using Android.Graphics;
 
 namespace SmartSHOJI
 {
+
     public class ContactsAdapter : BaseAdapter
     {
-        List<Contact> _contactList;
+        // 画像リスト
+        List<ImageData> _imagedata_list;
         Activity _activity;
 
-        public ContactsAdapter(Activity activity)
+
+        // コンストラクタ
+        public ContactsAdapter(Activity activity, List<ImageData> imagedata_list)
         {
             _activity = activity;
-            FillContacts();
-        }
-
-        void FillContacts()
-        {
-            var uri = ContactsContract.Contacts.ContentUri;
-
-            string[] projection = {
-                ContactsContract.Contacts.InterfaceConsts.Id,
-                ContactsContract.Contacts.InterfaceConsts.DisplayName,
-                ContactsContract.Contacts.InterfaceConsts.PhotoId
-            };
-
-            var cursor = _activity.ManagedQuery(uri, projection, null,null, null);
-
-            _contactList = new List<Contact>();
-
-            if (cursor.MoveToFirst())
-            {
-                do
-                {
-                    _contactList.Add(new Contact
-                    {
-                        Id = cursor.GetLong(
-                    cursor.GetColumnIndex(projection[0])),
-                        DisplayName = cursor.GetString(
-                    cursor.GetColumnIndex(projection[1])),
-                        PhotoId = cursor.GetString(
-                    cursor.GetColumnIndex(projection[2]))
-                    });
-                } while (cursor.MoveToNext());
-            }
+            _imagedata_list = imagedata_list;
         }
 
         class Contact
         {
+            // ID
             public long Id { get; set; }
+            // 連絡先表示名
             public string DisplayName { get; set; }
+            // 画像ID
             public string PhotoId { get; set; }
         }
-        public override int Count
+
+
+            // Listの長さ
+            public override int Count
         {
-            get { return _contactList.Count; }
+            get { return _imagedata_list.Count; }
         }
 
         public override Java.Lang.Object GetItem(int position)
@@ -68,32 +49,72 @@ namespace SmartSHOJI
             return null;
         }
 
+        // 指定した行のItemIDを取得
         public override long GetItemId(int position)
         {
-            return _contactList[position].Id;
+            return position;
         }
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
+            // 表示されるViewを取得しているっぽい？
             var view = convertView ?? _activity.LayoutInflater.Inflate(
                 Resource.Layout.ContactListItem, parent, false);
-            var contactName = view.FindViewById<TextView>(Resource.Id.ContactName);
-            var contactImage = view.FindViewById<ImageView>(Resource.Id.ContactImage);
-            contactName.Text = _contactList[position].DisplayName;
 
-            if (_contactList[position].PhotoId == null)
-            {
-                contactImage = view.FindViewById<ImageView>(Resource.Id.ContactImage);
-                contactImage.SetImageResource(Resource.Drawable.Icon);
-            }
-            else {
-                var contactUri = ContentUris.WithAppendedId(
-                    ContactsContract.Contacts.ContentUri, _contactList[position].Id);
-                var contactPhotoUri = Android.Net.Uri.WithAppendedPath(contactUri,
-                    Contacts.Photos.ContentDirectory);
-                contactImage.SetImageURI(contactPhotoUri);
-            }
+            // TextzViewを取得している
+            var contactName = view.FindViewById<TextView>(Resource.Id.ContactName);
+
+            // ImageViewを取得している
+            var contactImage = view.FindViewById<ImageView>(Resource.Id.ContactImage);
+
+            // 画像の名前をセット
+            contactName.Text = _imagedata_list[position].PhotoName;
+            // contactName.Text = _contactList[position].DisplayName;
+
+            // 画像をセット
+            //contactImage.SetImageBitmap(_imagedata_list[position].Photo);
+
+            HttpGet(_imagedata_list[position].Uri, contactImage);
             return view;
         }
+
+
+        private async void HttpGet(string url,ImageView image_view)
+        {
+            HttpClient httpClient = new HttpClient();
+
+            System.IO.Stream stream = await httpClient.GetStreamAsync(url);
+
+            System.IO.StreamReader sr = new System.IO.StreamReader(stream);
+            Bitmap oBmp = BitmapFactory.DecodeStream(stream);
+            image_view.SetImageBitmap(oBmp);
+            stream.Close();
+        
+        }
+        public static async void HttpGetImage(string uri, Bitmap image_bmp)
+        {
+            HttpClient httpClient = new HttpClient();
+
+            System.IO.Stream stream = await httpClient.GetStreamAsync(uri);
+
+            System.IO.StreamReader sr = new System.IO.StreamReader(stream);
+            Bitmap oBmp = BitmapFactory.DecodeStream(stream);
+            image_bmp = oBmp;
+            stream.Close();
+        }
     }
+    public class ImageData
+    {
+        public string Uri { get; set; }
+        public string PhotoName { get; set; }
+        public Bitmap Photo { get; set; }
+        public ImageData(string Uri,string PhotoName)
+        {
+            this.Uri = Uri;
+            this.PhotoName = PhotoName;
+            ContactsAdapter.HttpGetImage(Uri, Photo);
+           // Photo = BitmapFactory.de
+        }
+    }
+
 }
