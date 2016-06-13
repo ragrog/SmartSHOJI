@@ -50,6 +50,14 @@ namespace SmartSHOJI
             {
 
                 System.Console.WriteLine("タッチされている" + e.Position);
+                System.Console.WriteLine("URIは" + contactsAdapter.Uri(e.Position));
+
+                var intent = new Intent(this, typeof(ImageViewActivity));
+                intent.PutExtra("image_uri", contactsAdapter.Uri(e.Position));
+                StartActivity(intent);
+               
+
+
             };
 
 

@@ -42,6 +42,19 @@ namespace SmartSHOJI
             get { return _imagedata_list.Count; }
         }
 
+        // ”CˆÓ‚ÌURI‚ðŽæ“¾
+        public string Uri(int index)
+        {
+            if(0 <= index && index < Count)
+            {
+                return _imagedata_list[index].Uri;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public override Java.Lang.Object GetItem(int position)
         {
             // could wrap a Contact in a Java.Lang.Object

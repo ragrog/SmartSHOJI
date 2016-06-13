@@ -66,8 +66,11 @@ namespace SmartSHOJI
 			// aapt resource value: 0x7f050001
 			public const int ContactName = 2131034113;
 			
+			// aapt resource value: 0x7f050003
+			public const int ContactsListView = 2131034115;
+			
 			// aapt resource value: 0x7f050002
-			public const int ContactsListView = 2131034114;
+			public const int imagefull = 2131034114;
 			
 			static Id()
 			{
@@ -86,7 +89,10 @@ namespace SmartSHOJI
 			public const int ContactListItem = 2130903040;
 			
 			// aapt resource value: 0x7f030001
-			public const int Main = 2130903041;
+			public const int ImageView = 2130903041;
+			
+			// aapt resource value: 0x7f030002
+			public const int Main = 2130903042;
 			
 			static Layout()
 			{
